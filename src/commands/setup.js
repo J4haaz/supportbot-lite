@@ -28,7 +28,11 @@ module.exports = {
       return interaction.reply({ content: 'Only admins can run this command.', ephemeral: true });
     }
 
-    const guildConfigs = JSON.parse(fs.readFileSync(configPath));
+    let guildConfigs = {};
+    if (fs.existsSync(configPath) && fs.readFileSync(configPath, 'utf8').trim() !== '') {
+    guildConfigs = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    }
+
     guildConfigs[interaction.guildId] = {
       supportRoleId: supportRole.id,
       categoryId: category.id
