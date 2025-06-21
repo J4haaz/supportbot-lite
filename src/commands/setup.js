@@ -1,25 +1,25 @@
+// src/commands/setup.js
 const fs = require('fs');
 const path = require('path');
+const { SlashCommandBuilder } = require('discord.js');
 
 const configPath = path.join(__dirname, '../../data/guildConfigs.json');
 
 module.exports = {
-  name: 'setup',
-  description: 'Set the support role and ticket category for this server.',
-  options: [
-    {
-      name: 'supportrole',
-      type: 8, // ROLE
-      description: 'Role that handles support tickets',
-      required: true,
-    },
-    {
-      name: 'category',
-      type: 7, // CHANNEL
-      description: 'Category where ticket channels will be created',
-      required: true,
-    }
-  ],
+  data: new SlashCommandBuilder()
+    .setName('setup')
+    .setDescription('Set the support role and ticket category for this server.')
+    .addRoleOption(option =>
+      option.setName('supportrole')
+        .setDescription('Role that handles support tickets')
+        .setRequired(true)
+    )
+    .addChannelOption(option =>
+      option.setName('category')
+        .setDescription('Category where ticket channels will be created')
+        .setRequired(true)
+    ),
+
   async execute(interaction) {
     const supportRole = interaction.options.getRole('supportrole');
     const category = interaction.options.getChannel('category');
@@ -30,7 +30,7 @@ module.exports = {
 
     let guildConfigs = {};
     if (fs.existsSync(configPath) && fs.readFileSync(configPath, 'utf8').trim() !== '') {
-    guildConfigs = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      guildConfigs = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     }
 
     guildConfigs[interaction.guildId] = {

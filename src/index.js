@@ -5,7 +5,10 @@ const { Client, GatewayIntentBits, Collection, Routes } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds],
+  intents: [GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent
+  ],
 });
 
 client.commands = new Collection();
@@ -15,13 +18,10 @@ const commands = [];
 
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
-  client.commands.set(command.name, command);
-  commands.push({
-    name: command.name,
-    description: command.description,
-    options: command.options || [],
-  });
+  client.commands.set(command.data.name, command);
+  commands.push(command.data.toJSON());
 }
+
 
 // Register commands to one server (during development)
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
